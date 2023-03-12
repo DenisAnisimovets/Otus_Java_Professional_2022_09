@@ -1,0 +1,74 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Пользователи</title>
+    <script>
+
+        function postClient() {
+            const name = document.getElementById('name').value
+            const street = document.getElementById('street').value
+            const phones = document.getElementById('phones').value
+            let address = {
+                "street": street
+            };
+            let phonesArray = [];
+            phones.split(",").forEach((element) => {
+                let phone = {"phoneNumber": element}
+                phonesArray.push(phone)
+            })
+
+            let client = {
+                "name": name,
+                "address": address
+            };
+            client.phones = phonesArray;
+
+            fetch('api/client/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(client)
+            })
+                .then(() => window.location.reload());
+        }
+    </script>
+</head>
+
+<body>
+<h4>Создание клиента</h4>
+<input type="text" id="name" placeholder="Имя клиента">
+<input type="text" id="street" placeholder="Адрес">
+<input type="text" id="phones" placeholder="Телефоны через запятую">
+<button onClick="postClient()">Создать</button>
+
+<script>
+</script>
+
+<h4>Список клиентов</h4>
+<table className="clients" border="1">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Имя</th>
+        <th>Адрес</th>
+        <th>Телефоны</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="client : ${clients}">
+        <td style="width: 200px" th:text="${client.getId()}">1</td>
+        <td style="width: 200px" th:text="${client.getName()}">1</td>
+        <td style="width: 200px"
+            th:text="${client.getAddress().getStreet()}">1
+        </td>
+        <td style="width: 200px">
+            <div th:each="phone : ${client.getPhones()}">
+                <span th:text="${phone.getNumber()}"></span><br>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
